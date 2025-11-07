@@ -1,0 +1,31 @@
+<header>
+    <div class="grid-x grid-margin-x header">
+        <div class="cell small-12 medium-4 large-3">
+            <a href="{% url 'home_app:index' %}" style="font-size: 20px; color: #0277bd;">
+                Modelo de Blog
+            </a>
+        </div>
+        <div class="cell small-12 medium-4">
+            
+        </div>
+        <div class="cell small-12 large-5">
+            <ul class="menu" style="justify-content: flex-end;">
+                <li>
+                    <a href="{% url 'home_app:index' %}">Home</a>
+                </li>
+                <li>
+                    <a href="{% url 'entrada_app:entry-list' %}">Blog</a>
+                </li>
+                <li>
+                    {% if not user.is_anonymous %}
+                        <a class="warning button" href="{% url 'favoritos_app:perfil' %}">Perfil</a>
+                    {% else %}
+                        <a class="success button" href="{% url 'users_app:user-login' %}">Acceder</a>
+                    {% endif %}
+                    
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</header>
