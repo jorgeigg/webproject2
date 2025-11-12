@@ -15,6 +15,9 @@ DATABASES = {
         'PASSWORD': get_secret('PASSWORD'),
         'HOST': 'localhost',
         'PORT': '5432',
+        'OPTIONS': {
+            'options': '-c search_path=django_schema'
+        }
     }
 }
 # Static files (CSS, JavaScript, Images)
@@ -30,7 +33,7 @@ MEDIA_ROOT = BASE_DIR.child('media')
 CKEDITOR_UPLOAD_PATH = 'uploads/' # definir capeta de decarga o destino
 CKEDITOR_IMAGE_BACKEND = 'pillow' # administrador de archivos con el app pillow
 CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js' # necesita archivo jquery (biblioteca)
-CKEDITOR_CONFIGS = {
+CKEDITOR_5_CONFIGS = {
     'default': {
         'versionCheck': False,
         'toolbar': 'Custom',
@@ -43,7 +46,13 @@ CKEDITOR_CONFIGS = {
         ]
     },
 }
-
+# CKEDITOR_5_CONFIGS = {
+#     'default': {
+#         'toolbar': ['bold', 'italic', 'link'],
+#         'height': 300,
+#         'width': '100%',
+#     },
+# }
 # EMAIL SETTINGS
 # EMAIL_USE_TLS = True
 # EMAIL_HOST = 'smtp.gmail.com'

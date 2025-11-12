@@ -52,12 +52,12 @@ DJANGO_APPS = (
 LOCAL_APPS = (
     'applications.users',
     'applications.home',
-    'applications.medciones',
+    'applications.mediciones',
 )
 
 THIRD_PARTY_APPS = (
-    'ckeditor',
-    'ckeditor_uploader',
+    'django_ckeditor_5',
+    #'ckeditor5_uploader',
     'rest_framework',
     'rest_framework.authtoken',
 )
@@ -74,7 +74,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'blog.urls'
+ROOT_URLCONF = 'webproject2.urls'
 
 TEMPLATES = [
     {
@@ -87,13 +87,12 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'applications.procesors.home_contact',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'blog.wsgi.application'
+WSGI_APPLICATION = 'webproject2.wsgi.application'
 
 
 # Password validation
@@ -114,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'users.User'
+# AUTH_USER_MODEL = 'users.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
