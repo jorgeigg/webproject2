@@ -8,10 +8,10 @@ from .managers import MeasurementsDataManager
 # ***********************************************************************************  
 class MeasurementsDataFloat(models.Model):
     created_at = models.DateTimeField(db_column='datatime_db',auto_now=True)
-    data_state = models.IntegerField('state', unique=True)
-    data_tag = models.CharField('tag', max_length=25)
+    data_state = models.IntegerField(db_column='state',default=0)
+    data_tag = models.CharField(db_column='tag', max_length=25)
     data_value = models.FloatField(db_column='value',default=0)
-    data_unit = models.CharField('unit', max_length=25)
+    data_unit = models.CharField(db_column='unit', max_length=25)
     
     # Importo modelos avanzados de Manager
     objects = MeasurementsDataManager()
