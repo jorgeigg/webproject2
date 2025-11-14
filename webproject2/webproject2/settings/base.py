@@ -120,9 +120,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'es-mx'
 
-TIME_ZONE = 'America/Bogota'
-
-USE_I18N = True
+# TIME_ZONE = 'America/Bogota'
+TIME_ZONE = 'UTC'
 
 USE_L10N = True
 
