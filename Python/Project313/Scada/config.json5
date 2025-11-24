@@ -1,0 +1,57 @@
+{
+    // Dirección IP del PLC
+    "IP": "192.168.0.1",
+    //RACK del PLC
+    "RACK": 0,
+    // SLOP del PLC
+    "SLOT": 1,
+    // Tiempo de espera
+    "WAITING_TIME": 1,
+    // Ctte de desplazamiento o salto
+    "CTTE_ADDRESS": 516,
+    // No del Block db1
+    DB_NUMBER1: 302,
+    // No del primer Byte 
+    START_ADDRESS1: 0,
+    // Tamano del Bloque  
+    SIZE1: 516,
+    // Inicio del byte del name del estado 1
+    STATE1_NAME_INI: 0,
+    // Fin del byte del name del estado 1
+    STATE1_NAME_END: 256,
+    // Inicio del byte del valor del estado 1
+    STATE1_VALUE_INI: 256,
+    // Fin del byte del valor del estado 1
+    STATE1_VALUE_END: 258,
+    // Inicio del byte del name del estado 2
+    STATE2_NAME_INI: 258,
+    // Fin del byte del name del estado 2
+    STATE2_NAME_END: 514,
+    // Inicio del byte del valor del estado 2
+    STATE2_VALUE_INI: 514,
+    // Fin del byte del valor del estado 2
+    STATE2_VALUE_END: 516,
+    // No del Block db2
+    DB_NUMBER2: 301,
+    // No del primer Byte 
+    START_ADDRESS2: 0,
+    // Tamano del Bloque  
+    SIZE2: 52112,
+    // Inicio del byte del nombre de la medicion
+    MEAS_NAME_INI: 2,
+    // Fin del byte del nombre de la medicion
+    MEAS_NAME_END: 256,
+    // Inicio del byte del valor de la medicion
+    MEAS_VALUE_INI: 512,
+    // Fin del byte del valor de la medicion,
+    MEAS_VALUE_END: 516,
+    // Inicio del byte de la unidad de la medicion
+    MEAS_UNIT_INI: 258,
+    // Fin del byte de la unidad de la medicion
+    MEAS_UNIT_END: 512,
+    // Donde se encuentra el archivo de Excel
+    ORIGEN_EXCEL: "C:\\Users\\Administrator\\Documents\\Repo_project\\Python",
+    // Donde se va a copiar el archivo de Excel
+    DESTINO_EXCEL: "G:\\My Drive\\CompartidaNubeGoogleDrive"
+       
+}
