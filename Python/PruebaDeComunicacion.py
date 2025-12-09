@@ -34,8 +34,8 @@ print(f'STATE2: {state2}')
 
 STATE_VALUE_INI = 256
 STATE_VALUE_END = 258
-valor_a_escribir = 1
-
+# valor_a_escribir = 32767
+valor_a_escribir = 2
 # Convertir a bytes
 data = valor_a_escribir.to_bytes(STATE_VALUE_END - STATE_VALUE_INI, byteorder='big')
 

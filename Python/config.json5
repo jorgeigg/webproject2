@@ -52,6 +52,9 @@
     // Donde se encuentra el archivo de Excel
     ORIGEN_EXCEL: "C:\\Users\\Administrator\\Documents\\Repo_project\\Python",
     // Donde se va a copiar el archivo de Excel
-    DESTINO_EXCEL: "G:\\My Drive\\CompartidaNubeGoogleDrive"
-       
+    DESTINO_EXCEL: "G:\\My Drive\\CompartidaNubeGoogleDrive",
+    // Donde se define el nombre del archivo de Excel
+    NAME_EXCEL: "mediciones.xlsx",
+    // Donde se definie el % del uso del Disco para enviar una Alerta
+    ALERT_DISK: 0.8   
 }
