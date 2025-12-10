@@ -20,6 +20,7 @@ from cryptography.fernet import Fernet
 from django.core.exceptions import ImproperlyConfigured
 from datetime import date
 from pg_monitor import get_db_and_table_sizes, check_disk_usage, pretty_size
+from pop_up_window import crear_ventana
 
 # Nombre y Serial de los Disco de la Maquina fisica/Virtual
 # Nombre de la máquina
@@ -96,7 +97,14 @@ def run_monitor(dbname, user, password, host="localhost", port=5432):
     if alert:
         print('\n -----------------------------------------')  
         print(f"\n [WARNING] ALERTA: El uso del disco supera el umbral definido del : {get_config('ALERT_DISK')*100}%")
-        print('\n -----------------------------------------')  
+        print('\n -----------------------------------------')
+        crear_ventana(
+        titulo_ventana="WARNING - ALERTA USO DISCO",
+        texto_label=f"[WARNING] ALERTA: El uso del disco supera el umbral definido del : {get_config('ALERT_DISK')*100}%",
+        color_fondo="yellow",
+        color_label="yellow",
+        tamano_ventana="500x200"
+        )  
 # Declaro las variables de comunicacion
 #data_today = date.today()
 IP = get_config("IP")
