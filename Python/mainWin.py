@@ -18,9 +18,10 @@ import psycopg2
 from snap7.util import *
 from cryptography.fernet import Fernet
 from django.core.exceptions import ImproperlyConfigured
-from datetime import date
+
 from pg_monitor import get_db_and_table_sizes, check_disk_usage, pretty_size
 from pop_up_window import crear_ventana
+from pg_delete_data import delete_data_table
 
 # Nombre y Serial de los Disco de la Maquina fisica/Virtual
 # Nombre de la máquina
@@ -103,6 +104,7 @@ def run_monitor(dbname, user, password, host="localhost", port=5432):
         texto_label=f"[WARNING] ALERTA: El uso del disco supera el umbral definido del : {get_config('ALERT_DISK')*100}%",
         color_fondo="yellow",
         color_label="yellow",
+        color_texto_label= "blue",
         tamano_ventana="500x200"
         )  
 # Declaro las variables de comunicacion
@@ -151,7 +153,11 @@ run_monitor(
     host="localhost",
     port=5432
 )
-
+# Elimino los datos antiguos de la base de datos
+registro_eliminados = delete_data_table(get_config("RANGE_DAY_DEL"))
+print('\n -----------------------------------------') 
+print("\n Total de registros eliminados de la tabla: ", registro_eliminados)
+print('\n -----------------------------------------') 
 # Connect to your postgres DB
 try:
     credenciales = {

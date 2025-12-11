@@ -10,7 +10,7 @@ import os
 
 
 # Función para crear una ventana con parámetros personalizables
-def crear_ventana(titulo_ventana, texto_label, color_fondo, color_label, tamano_ventana):
+def crear_ventana(titulo_ventana, texto_label, color_fondo, color_label, color_texto_label, tamano_ventana):
     root = Tk()
     root.geometry(tamano_ventana)  # Tamaño de la ventana
     root.resizable(True, True) # Permitir redimensionamiento
@@ -32,7 +32,7 @@ def crear_ventana(titulo_ventana, texto_label, color_fondo, color_label, tamano_
     # Label centrado
     label = Label(frm, text=texto_label,
                   font=('Times', 20, 'bold italic'),
-                  fg="blue", bg=color_label, 
+                  fg=color_texto_label, bg=color_label, 
                   wraplength=350, # ancho máximo antes de saltar de línea
                   justify=CENTER) # alineación del texto
     label.pack(pady=20, expand=True) # Espaciado vertical y expansión
@@ -60,5 +60,6 @@ if __name__ == "__main__":
         texto_label="[WARNING] ALERTA: El uso del disco supera el umbral definido del : 80 %",
         color_fondo="yellow",
         color_label="yellow",
+        color_texto_label= "blue",
         tamano_ventana="500x200"
     )

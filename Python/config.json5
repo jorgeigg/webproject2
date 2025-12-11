@@ -56,5 +56,7 @@
     // Donde se define el nombre del archivo de Excel
     NAME_EXCEL: "mediciones.xlsx",
     // Donde se definie el % del uso del Disco para enviar una Alerta
-    ALERT_DISK: 0.8   
+    ALERT_DISK: 0.8,
+    // Donde se define el numero de dias que quieres guardar los datos, los demas se borran
+    RANGE_DAY_DEL: 365   
 }
