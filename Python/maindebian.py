@@ -11,7 +11,6 @@ import subprocess
 import sys
 import termios
 import tty
-import time
 import snap7
 import json
 import json5
@@ -22,7 +21,11 @@ import psycopg2
 from snap7.util import *
 from cryptography.fernet import Fernet
 from django.core.exceptions import ImproperlyConfigured
-from datetime import date
+
+
+from pg_monitor import get_db_and_table_sizes, check_disk_usage, pretty_size
+from pop_up_window import crear_ventana
+from pg_delete_data import delete_data_table
 
 # Funcion para leer una tecla sin necesidad de presionar Enter (solo Linux/Unix).
 def getch():
@@ -92,6 +95,36 @@ def get_config(config_name, configs=config):
         msg = "la variable %s no existe en el archivo de configuracion" % config_name
         raise ImproperlyConfigured(msg)
 
+# Función principal para ejecutar el monitoreo del tamaño de la base de datos y uso del disco
+def run_monitor(dbname, user, password, host="localhost", port=5432):
+    # Ruta del disco donde está PostgreSQL
+    disk_path = "/" if os.name != "nt" else "C:\\"
+
+    # Obtener tamaños
+    db_size, tables = get_db_and_table_sizes(dbname, user, password, host, port)
+    total, used, free, usage_percent, alert = check_disk_usage(disk_path)
+
+    print(f"Tamaño de la base '{dbname}': {pretty_size(db_size)}")
+    print("\nTamaños de tablas:")
+    for table_name, total_size in tables:
+        print(f"- {table_name}: {pretty_size(total_size)}")
+
+    print("\nEstado del disco:")
+    print(f"Total: {pretty_size(total)} | Usado: {pretty_size(used)} | Libre: {pretty_size(free)}")
+    print(f"Uso: {usage_percent*100:.2f}%")
+
+    if alert:
+        print('\n -----------------------------------------')  
+        print(f"\n [WARNING] ALERTA: El uso del disco supera el umbral definido del : {get_config('ALERT_DISK')*100}%")
+        print('\n -----------------------------------------')
+        crear_ventana(
+        titulo_ventana="WARNING - ALERTA USO DISCO",
+        texto_label=f"[WARNING] ALERTA: El uso del disco supera el umbral definido del : {get_config('ALERT_DISK')*100}%",
+        color_fondo="yellow",
+        color_label="yellow",
+        color_texto_label= "blue",
+        tamano_ventana="500x200"
+        )
 # Declaro las variables de comunicacion
 #data_today = date.today()
 IP = get_config("IP")
@@ -122,10 +155,27 @@ CTTE_ADDRESS = get_config("CTTE_ADDRESS")
 
 # Verifico el nombre de la maquina y el serial 
 if hostname != get_secret("HOST_NAME"):
+    print('\n -----------------------------------------')  
     print("\n Acceso denegado. Favor hablar con soperte tecnico.")
+    print('\n -----------------------------------------') 
     exit(1) # Salir del programa si no coincide el nombre o serial
 print('\n -----------------------------------------')    
 print("\n Acceso concedido. Bienvenido al sistema. Espere mientras se crea el archivo de Excel...")
+print('\n -----------------------------------------')  
+# Ejecuto el monitoreo del tamaño de la base de datos y uso del disco
+# Aquí pasas solo los parámetros de conexión
+run_monitor(
+    dbname=get_secret("DB_NAME"),
+    user=get_secret("USER"),
+    password=get_secret("PASSWORD"),
+    host="localhost",
+    port=5432
+)
+# Elimino los datos antiguos de la base de datos
+registro_eliminados = delete_data_table(get_config("RANGE_DAY_DEL"))
+print('\n -----------------------------------------') 
+print("\n Total de registros eliminados de la tabla: ", registro_eliminados)
+print('\n -----------------------------------------') 
 # Connect to your postgres DB
 try:
     credenciales = {
@@ -138,9 +188,13 @@ try:
     conn = psycopg2.connect(**credenciales)
     # Open a cursor to perform database operations
     cur = conn.cursor()
+    print('\n -----------------------------------------')      
     print("\n [OK] Se realizo la conexion con la base de datos PostgreSQL: ", credenciales["dbname"])
+    print('\n -----------------------------------------')  
 except psycopg2.Error as e:
+    print('\n -----------------------------------------')      
     print("\n Ocurrió un error de conexion con la base de datos PostgreSQL: ", e)
+    print('\n -----------------------------------------')  
 
 # Verficar el IP,RACK,SLOT    
 #print(IP,RACK,SLOT)
@@ -149,7 +203,9 @@ except psycopg2.Error as e:
 try:
     # Activo el Driver de comunicacion
     plc = snap7.client.Client()
+    print('\n -----------------------------------------')    
     print("[OK] La libreria Snap7 cargado correctamente.")   
+    print('\n -----------------------------------------')  
 except Exception as e:
     msg = "[OK] La libreria Snap7 no cargado correctamente: %s" % str(e)
     raise ImproperlyConfigured(msg)
@@ -160,7 +216,9 @@ try:
     plc.connect(IP, RACK, SLOT)
     # Verifico si estoy conectado
     if plc.get_connected():
+        print('\n -----------------------------------------')
         print("[OK] Esta Conectado al PLC")
+        print('\n -----------------------------------------')
         # Leo la informacion general del PLC
         plc_info = plc.get_cpu_info()
         # print('------------------------')
@@ -175,7 +233,9 @@ try:
             # Capturo una tecla
             tecla = getch()
             if tecla.lower() == 'q':
+                print('\n -----------------------------------------')
                 print("\nPrograma terminado por el usuario.")
+                print('\n -----------------------------------------')
                 break
             
             # Declaro variables
@@ -223,7 +283,7 @@ try:
                 INSERT INTO mediciones_measurementsdatafloat(
                     datatime_db, state, tag, value, unit)
                     VALUES ( \'%s\', %s, \'%s\', %s, \'%s\');
-                ''' % (date.today(), state1, meas_name, meas_value, meas_unit)
+                ''' % (datetime.datetime.now(), state1, meas_name, meas_value, meas_unit)
                 # Open a cursor to perform database operations
                 # Ejecutar una consulta
                 cur = conn.cursor()

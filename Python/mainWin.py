@@ -7,7 +7,6 @@ Created on 11/15/2025
 # Importo las Librerias
 import os
 import subprocess
-import time
 import snap7
 import json
 import json5
@@ -179,6 +178,7 @@ except psycopg2.Error as e:
     print("\n [Fault] Ocurrió un error de conexion con la base de datos PostgreSQL: ", e)
     print('\n -----------------------------------------')  
 
+# Verficar el IP,RACK,SLOT
 #print(IP,RACK,SLOT)
 
 # Verifico la carga del snap7
@@ -284,7 +284,7 @@ try:
             # cur.execute(query)
             
             # Esperar segundos antes de la siguiente lectura
-            time.sleep(WAITING_TIME)                
+            #time.sleep(WAITING_TIME)                
 except Exception as e:
     msg = "\n [OK] No esta Conectado al PLC: %s" % str(e)
     raise ImproperlyConfigured(msg)
