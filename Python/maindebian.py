@@ -8,9 +8,6 @@ Created on 11/15/2025
 import os
 import socket
 import subprocess
-import sys
-import termios
-import tty
 import snap7
 import json
 import json5
@@ -26,18 +23,19 @@ from django.core.exceptions import ImproperlyConfigured
 from pg_monitor import get_db_and_table_sizes, check_disk_usage, pretty_size
 from pop_up_window import crear_ventana
 from pg_delete_data import delete_data_table
+from pynput import keyboard
 
 # Funcion para leer una tecla sin necesidad de presionar Enter (solo Linux/Unix).
-def getch():
-    """Lee una tecla sin necesidad de Enter (solo Linux/Unix)."""
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
+pressed_q = False
+def on_press(key):
+    global pressed_q
     try:
-        tty.setraw(fd)              # modo lectura cruda
-        ch = sys.stdin.read(1)      # lee un solo carácter
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-    return ch
+        if key.char == 'q':
+            pressed_q = True
+    except:
+        pass
+listener = keyboard.Listener(on_press=on_press)
+listener.start()
 
 # Nombre y Serial de los Disco de la Maquina fisica/Virtual
 # Nombre de la máquina
@@ -62,13 +60,15 @@ serial_number = get_disk_serial_linux("/dev/sda")
 #print("Número de serie del disco:", serial_number)
 
 # Carga la clave
-with open("secret.key", "rb") as key_file:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(BASE_DIR, "secret.key"), "rb") as key_file:
     key = key_file.read()
 
-fernet = Fernet(key)
+fernet = Fernet(key) # Create the Fernet instance
 
 # Desencripta el archivo
-with open("secret.enc", "rb") as enc_file:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(BASE_DIR, "secret.enc"), "rb") as enc_file:
     encrypted = enc_file.read()
 
 # Cargo las variables secretos desde el archivo secret.enc
@@ -84,7 +84,8 @@ def get_secret(secret_name, secrets=secret):
         raise ImproperlyConfigured(msg)
    
 # Cargo la configuracion desde el archivo config.json5
-with open("config.json5", "r") as f:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(BASE_DIR, "config.json5"), "r") as f:
     config = json5.loads(f.read())
 
 # Función para obtener las variables de configuracion   
@@ -126,7 +127,7 @@ def run_monitor(dbname, user, password, host="localhost", port=5432):
         tamano_ventana="500x200"
         )
 # Declaro las variables de comunicacion
-#data_today = date.today()
+# data_today = date.today()
 IP = get_config("IP")
 RACK = get_config("RACK")
 SLOT = get_config("SLOT")
@@ -231,13 +232,12 @@ try:
         while True:
             # Verifico que no se ha presionado la tecla 'q'
             # Capturo una tecla
-            tecla = getch()
-            if tecla.lower() == 'q':
-                print('\n -----------------------------------------')
-                print("\nPrograma terminado por el usuario.")
-                print('\n -----------------------------------------')
+            if pressed_q:
+                print("\n -----------------------------------------")
+                print(" Programa terminado por el usuario.")
+                print(" -----------------------------------------\n")
                 break
-            
+           
             # Declaro variables
             ctte = 0
             

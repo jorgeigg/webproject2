@@ -6,6 +6,7 @@ Created on 11/15/2025
 # Programa que elimina datos antiguos de una tabla PostgreSQL basada en una condición de fecha
 
 # Importo las Librerias
+import os
 import psycopg2
 import json
 
@@ -16,15 +17,16 @@ from datetime import date, timedelta
 todays_date = date.today() # current time 'yy-mm-dd' UTC
 #print("Current date: ", todays_date)
 
-
 # Carga la clave
-with open("secret.key", "rb") as key_file:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(BASE_DIR, "secret.key"), "rb") as key_file:
     key = key_file.read()
 
 fernet = Fernet(key) # Create the Fernet instance
 
 # Desencripta el archivo
-with open("secret.enc", "rb") as enc_file:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(BASE_DIR, "secret.enc"), "rb") as enc_file:
     encrypted = enc_file.read()
 
 # Cargo las variables secretos desde el archivo secret.enc

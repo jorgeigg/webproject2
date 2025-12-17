@@ -43,13 +43,15 @@ serial_number = serials[0]  # primer disco
 #print("Serial limpio:", serial_number)
 
 # Carga la clave
-with open("secret.key", "rb") as key_file:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(BASE_DIR, "secret.key"), "rb") as key_file:
     key = key_file.read()
 
-fernet = Fernet(key)
+fernet = Fernet(key) # Create the Fernet instance
 
 # Desencripta el archivo
-with open("secret.enc", "rb") as enc_file:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(BASE_DIR, "secret.enc"), "rb") as enc_file:
     encrypted = enc_file.read()
 
 # Cargo las variables secretos desde el archivo secret.enc
@@ -65,7 +67,8 @@ def get_secret(secret_name, secrets=secret):
         raise ImproperlyConfigured(msg)
    
 # Cargo la configuracion desde el archivo config.json5
-with open("config.json5", "r") as f:
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(BASE_DIR, "config.json5"), "r") as f:
     config = json5.loads(f.read())
 
 # Función para obtener las variables de configuracion   
