@@ -5,7 +5,9 @@ Created on 11/15/2025
 # Programa que crea un archivo Excel con los datos leidos de un PLC S7-1500
 
 # Los datos estan almacenados en una base de datos PostgreSQL
+import sys
 import os
+import logging
 import socket
 import subprocess
 import shutil
@@ -24,6 +26,33 @@ from openpyxl.workbook import Workbook
 pd.options.mode.copy_on_write = True
 from cryptography.fernet import Fernet
 from django.core.exceptions import ImproperlyConfigured
+
+""" El módulo logging tiene varios niveles de severidad:
+- logging.debug() → mensajes muy detallados, útiles para depuración.
+- logging.info() → mensajes informativos, para indicar que algo inició o terminó correctamente.
+- logging.warning() → avisos de situaciones inesperadas pero no críticas.
+- logging.error() → errores que impiden que algo funcione como se esperaba. """
+# --- Configuración de logging ---
+logging.basicConfig(
+    filename="appExcel.log",   # archivo donde se guardan los logs
+    level=logging.DEBUG,       # nivel de detalle
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logging.info("Aplicación de creación de archivo de Excel iniciada")
+
+# --- Manejo de recursos en --onefile ---
+def resource_path(relative_path: str) -> str:
+    """
+    Devuelve la ruta absoluta al recurso.
+    Compatible con ejecución normal y con PyInstaller (--onefile).
+    """
+    try:
+        # Cuando se ejecuta empaquetado con PyInstaller
+        base_path = sys._MEIPASS
+    except Exception:
+        # Cuando se ejecuta en modo normal (fuentes)
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_path, relative_path)
 
 # Nombre y Serial de los Disco de la Maquina fisica/Virtual
 # Nombre de la máquina
@@ -45,18 +74,17 @@ serials = [line.strip() for line in lines if line.strip() and line.strip() != "S
 serial_number = serials[0]  # primer disco
 #print("Serial limpio:", serial_number)
     
-# Carga la clave
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(BASE_DIR, "secret.key"), "rb") as key_file:
+# Carga la clave para desencriptar el archivo secret.enc
+secret_file = resource_path("secret.key")
+with open(secret_file, "rb") as key_file:
     key = key_file.read()
 
 fernet = Fernet(key) # Create the Fernet instance
 
-# Desencripta el archivo
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(BASE_DIR, "secret.enc"), "rb") as enc_file:
+# Desencripta el archivo secret.enc
+secret_file = resource_path("secret.enc")
+with open(secret_file, "rb") as enc_file:
     encrypted = enc_file.read()
-
 # Cargo las variables secretos desde el archivo secret.enc
 decrypted = fernet.decrypt(encrypted)
 secret = json.loads(decrypted.decode())
@@ -66,29 +94,32 @@ def get_secret(secret_name, secrets=secret):
     try:
         return secrets[secret_name]
     except:
+        logging.error(f"La variable secreta {secret_name} no existe")
         msg = f"\n La variable secreta:{secret_name} no existe"
         raise ImproperlyConfigured(msg)
    
 # Cargo la configuracion desde el archivo config.json5
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(BASE_DIR, "config.json5"), "r") as f:
+config_file = resource_path("config.json5")
+with open(config_file, "r") as f:
     config = json5.loads(f.read())
-
+    
 # Función para obtener las variables de configuracion   
 def get_config(config_name, configs=config):
     try:
         return configs[config_name]
     except:
+        logging.error(f"La variable de configuración {config_name} no existe")
         msg = "\n la variable %s no existe en el archivo de configuracion" % config_name
         raise ImproperlyConfigured(msg)
     
 # Verifico el nombre de la maquina y el serial 
 if hostname != get_secret("HOST_NAME") or serial_number != get_secret("SERIAL_NUMBER"):
+    logging.debug("Acceso denegado. Favor hablar con soperte tecnico, sobre la seguridad del sistema.")
     print("\n Acceso denegado. Favor hablar con soperte tecnico.")
     exit(1) # Salir del programa si no coincide el nombre o serial
 print('\n -----------------------------------------')    
 print("\n Acceso concedido. Bienvenido al sistema. Espere mientras se crea el archivo de Excel...")
-            
+logging.info("Acceso concedido. Iniciando creación de archivo Excel.")            
 # Connect to your postgres DB
 try:
     credenciales = {
@@ -102,8 +133,10 @@ try:
     # Open a cursor to perform database operations
     cur = conn.cursor()
     print("\n [OK] Se realizo la conexion con la base de datos PostgreSQL: ", credenciales["dbname"])
+    logging.info("Conexion exitosa con la base de datos PostgreSQL: %s", credenciales["dbname"])
 except psycopg2.Error as e:
     print("\n Ocurrió un error de conexion con la base de datos PostgreSQL: ", e)
+    logging.error("Error de conexion con la base de datos PostgreSQL: %s", e)
 # Obtener los resultados
 cur.execute(
     'SELECT id, datatime_db, state, tag, value, unit FROM django_schema.mediciones_measurementsdatafloat')
@@ -130,7 +163,7 @@ name_excel = get_config("NAME_EXCEL")
 df.to_excel(name_excel, index=False)
 
 print(f"\n [OK] Archivo Excel '{name_excel}' creado exitosamente.")
-
+logging.info("Archivo Excel '%s' creado exitosamente.", name_excel)
 # Esperar 5 segundos luego reslizar una copia del archivo a la carpeta de Google Drive
 time.sleep(5)
 
@@ -139,12 +172,17 @@ origen = get_config("ORIGEN_EXCEL")
 destino = get_config("DESTINO_EXCEL")
 # Buscar todos los archivos que coincidan con el patrón
 archivos = glob.glob(os.path.join(origen, name_excel))
+#print(f"\n Archivos encontrados en '{origen}': {len(archivos)}")
 print('\n -----------------------------------------') 
 # Copiar cada archivo al destino
 for archivo in archivos:
     try:
         shutil.copy2(archivo, destino)  # copy2 preserva metadata (similar a /K en xcopy)
+        logging.info("Archivo copiado: %s -> %s", archivo, destino)
         print(f"Copiado: {archivo} -> {destino}")
+        
     except Exception as e:
+        logging.error("Error copiando archivo %s: %s", archivo, e)
         print(f"Error copiando {archivo}: {e}")
+        
 print('\n -----------------------------------------')          

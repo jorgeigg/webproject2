@@ -1,0 +1,23 @@
+2025-12-19 12:19:46,217 - INFO - Aplicación de creación de archivo de Excel iniciada
+2025-12-19 12:19:46,408 - INFO - Acceso concedido. Iniciando creación de archivo Excel.
+2025-12-19 12:19:46,705 - INFO - Conexion exitosa con la base de datos PostgreSQL: mediciones_db
+2025-12-19 12:19:47,045 - INFO - Archivo Excel 'mediciones.xlsx' creado exitosamente.
+2025-12-19 12:29:07,013 - INFO - Aplicación de creación de archivo de Excel iniciada
+2025-12-19 12:29:07,171 - INFO - Acceso concedido. Iniciando creación de archivo Excel.
+2025-12-19 12:29:07,372 - INFO - Conexion exitosa con la base de datos PostgreSQL: mediciones_db
+2025-12-19 12:29:07,579 - INFO - Archivo Excel 'mediciones.xlsx' creado exitosamente.
+2025-12-19 12:36:20,820 - INFO - Aplicación de creación de archivo de Excel iniciada
+2025-12-19 12:36:21,031 - INFO - Acceso concedido. Iniciando creación de archivo Excel.
+2025-12-19 12:36:21,268 - INFO - Conexion exitosa con la base de datos PostgreSQL: mediciones_db
+2025-12-19 12:36:21,501 - INFO - Archivo Excel 'mediciones.xlsx' creado exitosamente.
+2025-12-19 12:36:26,725 - INFO - Archivo copiado: C:\Users\Administrator\Documents\Repo_project\Django\webproject2\Python\mediciones.xlsx -> G:\My Drive\CompartidaNubeGoogleDrive
+2025-12-19 12:56:25,008 - INFO - Aplicación de creación de archivo de Excel iniciada
+2025-12-19 12:56:25,175 - INFO - Acceso concedido. Iniciando creación de archivo Excel.
+2025-12-19 12:56:25,378 - INFO - Conexion exitosa con la base de datos PostgreSQL: mediciones_db
+2025-12-19 12:56:25,628 - INFO - Archivo Excel 'mediciones.xlsx' creado exitosamente.
+2025-12-19 12:56:31,335 - INFO - Archivo copiado: C:\Users\Administrator\Documents\Repo_project\Django\webproject2\Python\mediciones.xlsx -> G:\My Drive\CompartidaNubeGoogleDrive
+2025-12-19 13:04:15,379 - INFO - Aplicación de creación de archivo de Excel iniciada
+2025-12-19 13:04:15,695 - INFO - Acceso concedido. Iniciando creación de archivo Excel.
+2025-12-19 13:04:15,883 - INFO - Conexion exitosa con la base de datos PostgreSQL: mediciones_db
+2025-12-19 13:04:16,071 - INFO - Archivo Excel 'mediciones.xlsx' creado exitosamente.
+2025-12-19 13:04:21,169 - INFO - Archivo copiado: C:\Users\Administrator\Documents\Repo_project\Django\webproject2\Python\mediciones.xlsx -> G:\My Drive\CompartidaNubeGoogleDrive

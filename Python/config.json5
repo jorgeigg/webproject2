@@ -50,7 +50,7 @@
     // Fin del byte de la unidad de la medicion
     MEAS_UNIT_END: 512,
     // Donde se encuentra el archivo de Excel
-    ORIGEN_EXCEL: "C:\\Users\\Administrator\\Documents\\Repo_project\\Python",
+    ORIGEN_EXCEL: "C:\\Users\\Administrator\\Documents\\Repo_project\\Django\\webproject2\\Python",
     // Donde se va a copiar el archivo de Excel
     DESTINO_EXCEL: "G:\\My Drive\\CompartidaNubeGoogleDrive",
     // Donde se define el nombre del archivo de Excel
